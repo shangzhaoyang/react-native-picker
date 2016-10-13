@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -61,6 +62,15 @@ public class PickerViewModule extends ReactContextBaseJavaModule {
     private static final String EVENT_KEY_CANCEL = "cancel";
     private static final String EVENT_KEY_SELECTED = "select";
 
+    private static final String BUTTON_FONT_SIZE = "ButtonFontSize";
+    private static final String TITLE_FONT_SIZE = "TitleFontSize";
+    private static final String ITEM_FONT_SIZE = "ItemFontSize";
+    private static final String ITEM_FONT_COLOR = "ItemFontColor";
+    private static final String ITEM_LINE_COLOR = "ItemLineColor";
+
+    private int buttonSize = -1;
+    private int titleSize = -1;
+
     private static final String ERROR_NOT_INIT = "please initialize";
 
     private View view;
@@ -99,10 +109,44 @@ public class PickerViewModule extends ReactContextBaseJavaModule {
         return REACT_CLASS;
     }
 
+    public static int ItemSize = 20;
+    public static int[] ItemColor = null;
+    public static int[] LineColor = null;
+
     @ReactMethod
     public void _init(ReadableMap options) {
         Activity activity = getCurrentActivity();
         if (activity != null && options.hasKey(PICKER_DATA)) {
+            if (options.hasKey(ITEM_FONT_SIZE)) {
+                ItemSize = options.getInt(ITEM_FONT_SIZE);
+            }
+
+            if (options.hasKey(ITEM_FONT_COLOR)) {
+                ItemColor = new int[4];
+                ReadableArray array = options.getArray(ITEM_FONT_COLOR);
+                for (int i = 0; i < array.size(); i++) {
+                    if (i == 3) {
+                        ItemColor[i] = (int) (array.getDouble(i) * 255);
+                    } else {
+                        ItemColor[i] = array.getInt(i);
+                    }
+                }
+
+            }
+
+            if (options.hasKey(ITEM_LINE_COLOR)) {
+                LineColor = new int[4];
+                ReadableArray array = options.getArray(ITEM_LINE_COLOR);
+                for (int i = 0; i < array.size(); i++) {
+                    if (i == 3) {
+                        LineColor[i] = (int) (array.getDouble(i) * 255);
+                    } else {
+                        LineColor[i] = array.getInt(i);
+                    }
+                }
+
+            }
+
             view = activity.getLayoutInflater().inflate(R.layout.popup_picker_view, null);
             barLayout = (RelativeLayout) view.findViewById(R.id.barLayout);
             cancelTV = (TextView) view.findViewById(R.id.cancel);
@@ -124,6 +168,17 @@ public class PickerViewModule extends ReactContextBaseJavaModule {
                     RelativeLayout.LayoutParams.MATCH_PARENT,
                     barViewHeight);
             barLayout.setLayoutParams(params);
+
+            if (options.hasKey((BUTTON_FONT_SIZE))) {
+                buttonSize = options.getInt(BUTTON_FONT_SIZE);
+                cancelTV.setTextSize(buttonSize);
+                confirmTV.setTextSize(buttonSize);
+            }
+
+            if (options.hasKey(TITLE_FONT_SIZE)) {
+                titleSize = options.getInt(TITLE_FONT_SIZE);
+                titleTV.setTextSize(titleSize);
+            }
 
             if (options.hasKey(TEXT_BAR_COLOR)) {
                 ReadableArray array = options.getArray(TEXT_BAR_COLOR);

@@ -2,14 +2,18 @@ package com.beefe.picker.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.beefe.picker.PickerViewModule;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -106,7 +110,15 @@ public class LoopView extends View {
         textSize = 0;
         colorGray = 0xffafafaf;
         colorBlack = 0xff313131;
+        if (PickerViewModule.ItemColor != null) {
+            colorBlack = Color.argb(PickerViewModule.ItemColor[3], PickerViewModule.ItemColor[0],
+                    PickerViewModule.ItemColor[1], PickerViewModule.ItemColor[2]);
+        }
         colorLightGray = 0xffc5c5c5;
+        if (PickerViewModule.LineColor != null) {
+            colorLightGray = Color.argb(PickerViewModule.LineColor[3], PickerViewModule.LineColor[0],
+                    PickerViewModule.LineColor[1], PickerViewModule.LineColor[2]);
+        }
 
         totalScrollY = 0;
         initPosition = -1;
@@ -114,7 +126,7 @@ public class LoopView extends View {
 
         initPaints();
 
-        setTextSize(20F);
+        setTextSize(PickerViewModule.ItemSize);
     }
 
     private void initPaints() {
