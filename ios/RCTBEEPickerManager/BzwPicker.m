@@ -10,7 +10,23 @@
 
 @implementation BzwPicker
 
--(instancetype)initWithFrame:(CGRect)frame dic:(NSDictionary *)dic leftStr:(NSString *)leftStr centerStr:(NSString *)centerStr rightStr:(NSString *)rightStr topbgColor:(NSArray *)topbgColor bottombgColor:(NSArray *)bottombgColor leftbtnbgColor:(NSArray *)leftbtnbgColor rightbtnbgColor:(NSArray *)rightbtnbgColor centerbtnColor:(NSArray *)centerbtnColor selectValueArry:(NSArray *)selectValueArry
+-(instancetype)initWithFrame:(CGRect)frame
+                         dic:(NSDictionary *)dic
+                     leftStr:(NSString *)leftStr
+                   centerStr:(NSString *)centerStr
+                    rightStr:(NSString *)rightStr
+                  topbgColor:(NSArray *)topbgColor
+               bottombgColor:(NSArray *)bottombgColor
+              leftbtnbgColor:(NSArray *)leftbtnbgColor
+             rightbtnbgColor:(NSArray *)rightbtnbgColor
+              centerbtnColor:(NSArray *)centerbtnColor
+              ButtonFontSize:(CGFloat)ButtonFontSize
+               TitleFontSize:(CGFloat)TitleFontSize
+                ItemFontSize:(CGFloat)ItemFontSize
+               ItemFontColor:(NSArray *)ItemFontColor
+               ItemLineColor:(NSArray *)ItemLineColor
+             selectValueArry:(NSArray *)selectValueArry;
+
 {
     self = [super initWithFrame:frame];
     if (self)
@@ -25,15 +41,36 @@
         self.centStr=centerStr;
         [self getStyle];
         [self getnumStyle];
-        dispatch_async(dispatch_get_main_queue(), ^{
-           [self makeuiWith:topbgColor With:bottombgColor With:leftbtnbgColor With:rightbtnbgColor With:centerbtnColor];
-            [self selectRow];
-        });
+        
+        [self makeuiWith:topbgColor
+                    With:bottombgColor
+                    With:leftbtnbgColor
+                    With:rightbtnbgColor
+                    With:centerbtnColor
+          ButtonFontSize:(CGFloat)ButtonFontSize
+           TitleFontSize:(CGFloat)TitleFontSize
+            ItemFontSize:(CGFloat)ItemFontSize
+           ItemFontColor:(NSArray *)ItemFontColor
+           ItemLineColor:(NSArray *)ItemLineColor];
+        [self selectRow];
+        
     }
     return self;
 }
--(void)makeuiWith:(NSArray *)topbgColor With:(NSArray *)bottombgColor With:(NSArray *)leftbtnbgColor With:(NSArray *)rightbtnbgColor With:(NSArray *)centerbtnColor
+-(void)makeuiWith:(NSArray *)topbgColor
+             With:(NSArray *)bottombgColor
+             With:(NSArray *)leftbtnbgColor
+             With:(NSArray *)rightbtnbgColor
+             With:(NSArray *)centerbtnColor
+   ButtonFontSize:(CGFloat)ButtonFontSize
+    TitleFontSize:(CGFloat)TitleFontSize
+     ItemFontSize:(CGFloat)ItemFontSize
+    ItemFontColor:(NSArray *)ItemFontColor
+    ItemLineColor:(NSArray *)ItemLineColor
 {
+    self.ItemFontSize=ItemFontSize;
+    self.ItemFontColor=ItemFontColor;
+    self.ItemLineColor = ItemLineColor;
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0,0, self.frame.size.width, 40)];
     view.backgroundColor = [UIColor cyanColor];
     
@@ -43,7 +80,7 @@
     self.leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     self.leftBtn.frame = CGRectMake(10, 5, 50, 30);
     [self.leftBtn setTitle:self.leftStr forState:UIControlStateNormal];
-    [self.leftBtn setFont:[UIFont systemFontOfSize:16]];
+    [self.leftBtn setFont:[UIFont systemFontOfSize:ButtonFontSize]];
     self.leftBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     [self.leftBtn addTarget:self action:@selector(cancleAction) forControlEvents:UIControlEventTouchUpInside];
     
@@ -53,7 +90,7 @@
     
     view.backgroundColor=[self colorWith:topbgColor];
     
-
+    
     self.rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     self.rightBtn.frame = CGRectMake(view.frame.size.width-60,5, 50, 30);
     [self.rightBtn setTitle:self.rightStr forState:UIControlStateNormal];
@@ -63,40 +100,57 @@
     
     
     [view addSubview:self.rightBtn];
-    [self.rightBtn setFont:[UIFont systemFontOfSize:16]];
+    [self.rightBtn setFont:[UIFont systemFontOfSize:ButtonFontSize]];
     [self.rightBtn addTarget:self action:@selector(cfirmAction) forControlEvents:UIControlEventTouchUpInside];
     
     
-    UILabel *cenLabel=[[UILabel alloc]initWithFrame:CGRectMake(view.frame.size.width/2-25, 5, 50, 30)];
+    UILabel *cenLabel=[[UILabel alloc]initWithFrame:CGRectMake(view.frame.size.width/2-100, 5, 200, 30)];
     
-    [cenLabel setFont:[UIFont systemFontOfSize:16]];
-    
+    [cenLabel setFont:[UIFont systemFontOfSize:TitleFontSize]];
+    [cenLabel setTextAlignment:NSTextAlignmentCenter];
     cenLabel.text=self.centStr;
-
+    cenLabel.baselineAdjustment=UIBaselineAdjustmentAlignCenters;
     [cenLabel setTextColor:[self colorWith:centerbtnColor]];
-        
+    
     [view addSubview:cenLabel];
-
+    
     self.pick = [[UIPickerView alloc] initWithFrame:CGRectMake(-15, 40, self.frame.size.width+15, self.frame.size.height - 40)];
     
     self.pick.delegate = self;
     self.pick.dataSource = self;
     self.pick.showsSelectionIndicator=YES;
+    
     [self addSubview:self.pick];
     
     self.pick.backgroundColor=[self colorWith:bottombgColor];
 }
+- (void)separatorWithView:(UIView * )view color:(UIColor *)color
+{
+    if(view.subviews != 0  )
+    {
+        if(view.bounds.size.height < 5)
+        {
+            view.backgroundColor = color;
+            
+        }
+        [view.subviews enumerateObjectsUsingBlock:^( UIView *  obj, NSUInteger idx, BOOL *  stop) {
+            [self separatorWithView:obj color:color];
+        }];
+    }
+    
+}
+
 //返回显示的列数
 -(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
 {
     if (_Correlation) {
-      //这里是关联的
+        //这里是关联的
         if ([_numberCorrela isEqualToString:@"three"]) {
             
             return 3;
             
         }else if ([_numberCorrela isEqualToString:@"two"]){
-        
+            
             return 2;
         }
         
@@ -108,7 +162,7 @@
         
     }else{
         
-     return self.noCorreArry.count;
+        return self.noCorreArry.count;
     }
 }
 //返回当前列显示的行数
@@ -116,18 +170,18 @@
 {
     if (_Correlation) {
         
-     if (component == 0) {
-        
-        return self.provinceArray.count;
-        
-    } else if (component == 1) {
-        
-        return self.cityArray.count;
-        
-    } else {
-        
-        return self.townArray.count;
-     }
+        if (component == 0) {
+            
+            return self.provinceArray.count;
+            
+        } else if (component == 1) {
+            
+            return self.cityArray.count;
+            
+        } else {
+            
+            return self.townArray.count;
+        }
     }
     
     NSLog(@"%@",[self.noCorreArry objectAtIndex:component]);
@@ -145,41 +199,47 @@
             
         }
         
-     return  [[self.noCorreArry objectAtIndex:component] count];
+        return  [[self.noCorreArry objectAtIndex:component] count];
     }
-
+    
 }
 
 #pragma mark Picker Delegate Methods
 
-//返回当前行的内容,此处是将数组中数值添加到滚动的那个显示栏上
--(NSString*)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
-{
+- (nullable NSAttributedString *)pickerView:(UIPickerView *)pickerView attributedTitleForRow:(NSInteger)row forComponent:(NSInteger)component{
+    
+    NSString *string =@"";
     if (_Correlation) {
         
-    if (component == 0) {
-        
-        return [NSString stringWithFormat:@"%@",[self.provinceArray objectAtIndex:row]];
-        
-    } else if (component == 1) {
-        
-        return [NSString stringWithFormat:@"%@",[self.cityArray objectAtIndex:row]];
-    } else {
-        
-       return [NSString stringWithFormat:@"%@",[self.townArray objectAtIndex:row]];
-      }
+        if (component == 0) {
+            
+            string = [NSString stringWithFormat:@"%@",[self.provinceArray objectAtIndex:row]];
+            
+        } else if (component == 1) {
+            
+            string = [NSString stringWithFormat:@"%@",[self.cityArray objectAtIndex:row]];
+        } else {
+            
+            string = [NSString stringWithFormat:@"%@",[self.townArray objectAtIndex:row]];
+        }
     }else{
-    
+        
         if (_noArryElementBool) {
             
-            return [NSString stringWithFormat:@"%@",[self.noCorreArry objectAtIndex:row]];
+            string = [NSString stringWithFormat:@"%@",[self.noCorreArry objectAtIndex:row]];
             
         }else{
-      return [NSString stringWithFormat:@"%@",[[self.noCorreArry objectAtIndex:component] objectAtIndex:row]];
+            string = [NSString stringWithFormat:@"%@",[[self.noCorreArry objectAtIndex:component] objectAtIndex:row]];
         }
     }
-    
+    NSMutableAttributedString *result = [[NSMutableAttributedString alloc]initWithString:string];
+    [result addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:self.ItemFontSize] range:NSMakeRange(0, result.length)];
+    [result addAttribute:NSForegroundColorAttributeName value:[self colorWith:self.ItemFontColor] range:NSMakeRange(0, result.length)];
+    [self separatorWithView:pickerView color:[self colorWith:self.ItemLineColor]];
+    return result;
 }
+
+
 - (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component {
     
     if (_Correlation) {
@@ -473,15 +533,15 @@
         
         self.bolock(dic);
     }
-   
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [UIView animateWithDuration:.2f animations:^{
-            
-            [self setFrame:CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH, 250)];
-            
-        }];
-    });
+    
+    
+    
+    [UIView animateWithDuration:.2f animations:^{
+        
+        [self setFrame:CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH, 250)];
+        
+    }];
+    
 }
 //按了确定按钮
 -(void)cfirmAction
@@ -503,12 +563,12 @@
         self.bolock(dic);
     }
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [UIView animateWithDuration:.2f animations:^{
-            
-            [self setFrame:CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH, 250)];
-        }];
-    });
+    
+    [UIView animateWithDuration:.2f animations:^{
+        
+        [self setFrame:CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH, 250)];
+    }];
+    
 }
 -(void)selectRow
 {
@@ -537,7 +597,7 @@
         if ([selectStr isEqualToString:str]) {
             _num=i;
             [_pick reloadAllComponents];
-
+            
             [_pick selectRow:i  inComponent:0 animated:NO];
             break;
         }
@@ -572,7 +632,7 @@
             _threenum=i;
             
             [_pick reloadAllComponents];
-
+            
             [_pick selectRow:i  inComponent:1 animated:NO];
             
             break;
@@ -602,7 +662,7 @@
         NSString *str=[NSString stringWithFormat:@"%@",[self.townArray objectAtIndex:i]];
         if ([selectStrThree isEqualToString:str]) {
             [_pick reloadAllComponents];
-
+            
             [_pick selectRow:i  inComponent:2 animated:NO];
             break;
         }
@@ -749,8 +809,8 @@
                 NSString *selectStr=[NSString stringWithFormat:@"%@",[self.selectValueArry firstObject]];
                 [self.backArry addObject:selectStr];
             }else{
-            
-            [self.backArry addObject:[self.noCorreArry objectAtIndex:0]];
+                
+                [self.backArry addObject:[self.noCorreArry objectAtIndex:0]];
             }
             
         }else{

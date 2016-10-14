@@ -61,6 +61,14 @@ RCT_EXPORT_METHOD(_init:(NSDictionary *)indic){
     NSArray *pickerBg=indic[@"pickerBg"];
     NSArray *selectArry=indic[@"selectedValue"];
     
+    CGFloat ButtonFontSize=[indic[@"ButtonFontSize"] floatValue];
+    CGFloat TitleFontSize=[indic[@"TitleFontSize"] floatValue];
+    CGFloat ItemFontSize=[indic[@"ItemFontSize"] floatValue];
+    NSArray *ItemFontColor=indic[@"ItemFontColor"];
+    NSArray *ItemLineColor=indic[@"ItemLineColor"];
+    
+    
+    
     id pickerData=indic[@"pickerData"];
     
     NSMutableDictionary *dataDic=[[NSMutableDictionary alloc]init];
@@ -70,60 +78,60 @@ RCT_EXPORT_METHOD(_init:(NSDictionary *)indic){
     [result.view.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
         if ([obj isKindOfClass:[BzwPicker class]]) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                [obj removeFromSuperview];
-            });
+            [obj removeFromSuperview];
         }
         
     }];
     
-    self.pick=[[BzwPicker alloc]initWithFrame:CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH, 250) dic:dataDic leftStr:pickerCancelBtnText centerStr:pickerTitleText rightStr:pickerConfirmBtnText topbgColor:pickerToolBarBg bottombgColor:pickerBg leftbtnbgColor:pickerCancelBtnColor rightbtnbgColor:pickerConfirmBtnColor centerbtnColor:pickerTitleColor selectValueArry:selectArry];
+    self.pick=[[BzwPicker alloc]initWithFrame:CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH, 250)
+                                          dic:dataDic
+                                      leftStr:pickerCancelBtnText
+                                    centerStr:pickerTitleText
+                                     rightStr:pickerConfirmBtnText
+                                   topbgColor:pickerToolBarBg
+                                bottombgColor:pickerBg
+                               leftbtnbgColor:pickerCancelBtnColor
+                              rightbtnbgColor:pickerConfirmBtnColor
+                               centerbtnColor:pickerTitleColor
+                               ButtonFontSize:ButtonFontSize
+                                TitleFontSize:TitleFontSize
+                                 ItemFontSize:ItemFontSize
+                                ItemFontColor:ItemFontColor
+                                ItemLineColor:ItemLineColor
+                              selectValueArry:selectArry];
     
     _pick.bolock=^(NSDictionary *backinfoArry){
         
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            [self.bridge.eventDispatcher sendAppEventWithName:@"pickerEvent" body:backinfoArry];
-        });
+        [self.bridge.eventDispatcher sendAppEventWithName:@"pickerEvent" body:backinfoArry];
     };
     
-    dispatch_async(dispatch_get_main_queue(), ^{
+    [result.view addSubview:_pick];
+    
+    [UIView animateWithDuration:.3 animations:^{
         
-        [result.view addSubview:_pick];
+        [_pick setFrame:CGRectMake(0, SCREEN_HEIGHT-250, SCREEN_WIDTH, 250)];
         
-        [UIView animateWithDuration:.3 animations:^{
-            
-            [_pick setFrame:CGRectMake(0, SCREEN_HEIGHT-250, SCREEN_WIDTH, 250)];
-            
-        }];
-        
-    });
+    }];
     
 }
 
 RCT_EXPORT_METHOD(show){
     if (self.pick) {
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [UIView animateWithDuration:.3 animations:^{
-                
-                [_pick setFrame:CGRectMake(0, SCREEN_HEIGHT-250, SCREEN_WIDTH, 250)];
-                
-            }];
-        });
+        [UIView animateWithDuration:.3 animations:^{
+            [_pick setFrame:CGRectMake(0, SCREEN_HEIGHT-250, SCREEN_WIDTH, 250)];
+            
+        }];
     }return;
 }
 
 RCT_EXPORT_METHOD(hide){
     
     if (self.pick) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [UIView animateWithDuration:.3 animations:^{
-                [_pick setFrame:CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH, 250)];
-            }];
-        });
-    }return;
+        [UIView animateWithDuration:.3 animations:^{
+            [_pick setFrame:CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH, 250)];
+        }];
+    }
+    return;
 }
 RCT_EXPORT_METHOD(isPickerShow:(RCTResponseSenderBlock)getBack){
     
@@ -141,6 +149,9 @@ RCT_EXPORT_METHOD(isPickerShow:(RCTResponseSenderBlock)getBack){
     }else{
         getBack(@[@"picker不存在"]);
     }
+}
+- (dispatch_queue_t)methodQueue {
+    return dispatch_get_main_queue();
 }
 
 @end

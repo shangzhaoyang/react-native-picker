@@ -40,7 +40,9 @@ typedef void(^backBolock)(NSDictionary * );
 @property(strong,nonatomic)NSString *centStr;
 @property(strong,nonatomic)NSString *rightStr;
 
-
+@property(assign,nonatomic)CGFloat ItemFontSize;
+@property(strong,nonatomic)NSArray *ItemFontColor;
+@property(strong,nonatomic)NSArray *ItemLineColor;
 
 @property(assign,nonatomic)BOOL Correlation;//判断有没有没有关联
 
@@ -69,7 +71,22 @@ typedef void(^backBolock)(NSDictionary * );
 
 
 
--(instancetype)initWithFrame:(CGRect)frame dic:(NSDictionary *)dic leftStr:(NSString *)leftStr centerStr:(NSString *)centerStr rightStr:(NSString *)rightStr topbgColor:(NSArray *)topbgColor bottombgColor:(NSArray *)bottombgColor leftbtnbgColor:(NSArray *)leftbtnbgColor rightbtnbgColor:(NSArray *)rightbtnbgColor centerbtnColor:(NSArray *)centerbtnColor selectValueArry:(NSArray *)selectValueArry;
+-(instancetype)initWithFrame:(CGRect)frame
+                         dic:(NSDictionary *)dic
+                     leftStr:(NSString *)leftStr
+                   centerStr:(NSString *)centerStr
+                    rightStr:(NSString *)rightStr
+                  topbgColor:(NSArray *)topbgColor
+               bottombgColor:(NSArray *)bottombgColor
+              leftbtnbgColor:(NSArray *)leftbtnbgColor
+             rightbtnbgColor:(NSArray *)rightbtnbgColor
+              centerbtnColor:(NSArray *)centerbtnColor
+              ButtonFontSize:(CGFloat)ButtonFontSize
+               TitleFontSize:(CGFloat)TitleFontSize
+                ItemFontSize:(CGFloat)ItemFontSize
+               ItemFontColor:(NSArray *)ItemFontColor
+               ItemLineColor:(NSArray *)ItemLineColor
+             selectValueArry:(NSArray *)selectValueArry;
 
 
 @end
